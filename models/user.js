@@ -6,6 +6,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
+      defaultValue: '000001'
     },
     name: DataTypes.STRING,
     username: DataTypes.STRING,
@@ -25,15 +26,16 @@ module.exports = (sequelize, DataTypes) => {
 
   // Auto-generate sequential userid
   User.beforeCreate(async (user, options) => {
-    const lastUser = await User.findOne({
-      order: [['createdAt', 'DESC']],
-    });
-    let nextId = 1;
-    if (lastUser && lastUser.userid) {
-      nextId = parseInt(lastUser.userid) + 1;
-    }
-    user.userid = nextId.toString().padStart(6, '0'); // e.g., 000001
+  const lastUser = await User.findOne({
+    order: [['createdAt', 'DESC']],
   });
+  let nextId = 1;
+  if (lastUser && lastUser.userid) {
+    nextId = parseInt(lastUser.userid) + 1;
+  }
+  user.userid = nextId.toString().padStart(6, '0');
+});
+
 
   return User;
 };
