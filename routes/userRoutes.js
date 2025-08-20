@@ -119,7 +119,7 @@ router.post('/send-otp/email', async (req, res) => {
     service: 'gmail',
     auth: {
       user: 'maswath55@gmail.com',
-      pass: 'hccq svbv cwac wgrn', // Use app password or environment variable
+      pass: 'eerd edcn kdqg vaqc', // Use app password or environment variable
     },
   });
 
