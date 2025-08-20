@@ -1,17 +1,21 @@
 const express = require('express');
-const { sequelize } = require('./models');
-const userRoutes = require('./routes/userRoutes');
-
 const app = express();
+const port = 3000;
+
+// Body parser
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use('/users', userRoutes);
+const userRoutes = require('./routes/userRoutes');
+app.use('/api/users', userRoutes);
 
-const PORT = process.env.PORT || 3000;
+// Root
+app.get('/', (req, res) => {
+  res.send('Server is running');
+});
 
-app.listen(PORT, async () => {
-  console.log(`Server running on port ${PORT}`);
-  await sequelize.sync(); // sync models with DB
-  console.log('Database synced');
+// Start server
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
 });
