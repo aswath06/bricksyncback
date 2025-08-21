@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const nodemailer = require('nodemailer');
 const { User } = require('../models');
-const { authenticateJWT } = require('../middleware/authMiddleware');
 
 // In-memory OTP store
 const otpStore = {};
@@ -22,8 +21,8 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Get all users (JWT protected)
-router.get('/', authenticateJWT, async (req, res) => {
+// Get all users (🚫 no JWT now)
+router.get('/', async (req, res) => {
   try {
     const users = await User.findAll();
     res.json(users);
@@ -32,8 +31,8 @@ router.get('/', authenticateJWT, async (req, res) => {
   }
 });
 
-// Get user by ID (JWT protected)
-router.get('/:id', authenticateJWT, async (req, res) => {
+// Get user by ID (🚫 no JWT now)
+router.get('/:id', async (req, res) => {
   try {
     const user = await User.findByPk(req.params.id);
     if (!user) return res.status(404).json({ message: 'User not found' });
@@ -119,7 +118,7 @@ router.post('/send-otp/email', async (req, res) => {
     service: 'gmail',
     auth: {
       user: 'maswath55@gmail.com',
-      pass: 'eerd edcn kdqg vaqc', // Use app password or environment variable
+      pass: 'eerd edcn kdqg vaqc', // ⚠️ move to env var
     },
   });
 
