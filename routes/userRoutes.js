@@ -76,8 +76,8 @@ router.get('/by-userid/:userid', async (req, res) => {
 
 // 🔹 Generic routes AFTER specific ones
 
-// Get user by ID (numeric only to avoid clashes)
-router.get('/:id(\\d+)', async (req, res) => {
+// Get user by ID
+router.get('/:id', async (req, res) => {
   try {
     const user = await User.findByPk(req.params.id);
     if (!user) return res.status(404).json({ message: 'User not found' });
@@ -88,7 +88,7 @@ router.get('/:id(\\d+)', async (req, res) => {
 });
 
 // Update user
-router.put('/:id(\\d+)', async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
     const user = await User.findByPk(req.params.id);
     if (!user) return res.status(404).json({ message: 'User not found' });
@@ -100,7 +100,7 @@ router.put('/:id(\\d+)', async (req, res) => {
 });
 
 // Delete user
-router.delete('/:id(\\d+)', async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const user = await User.findByPk(req.params.id);
     if (!user) return res.status(404).json({ message: 'User not found' });
@@ -112,7 +112,7 @@ router.delete('/:id(\\d+)', async (req, res) => {
 });
 
 // Get user statements
-router.get('/:userId(\\d+)/statements', async (req, res) => {
+router.get('/:userId/statements', async (req, res) => {
   try {
     const user = await User.findByPk(req.params.userId);
     if (!user) return res.status(404).json({ message: 'User not found' });
@@ -123,7 +123,7 @@ router.get('/:userId(\\d+)/statements', async (req, res) => {
 });
 
 // Add statement
-router.post('/add-statement/:userId(\\d+)', async (req, res) => {
+router.post('/add-statement/:userId', async (req, res) => {
   try {
     const user = await User.findByPk(req.params.userId);
     if (!user) return res.status(404).json({ message: 'User not found' });
