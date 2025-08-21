@@ -138,6 +138,36 @@ router.post('/send-otp/email', async (req, res) => {
     res.status(500).json({ message: 'Failed to send OTP via email' });
   }
 });
+// Get user by email
+router.get('/by-email', async (req, res) => {
+  try {
+    const { email } = req.query;
+    if (!email) return res.status(400).json({ message: 'Email is required' });
+
+    const user = await User.findOne({ where: { email } });
+    if (!user) return res.status(404).json({ exists: false, message: 'User not found' });
+
+    res.json({ exists: true, user });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// Get user by phone
+router.get('/by-phone', async (req, res) => {
+  try {
+    const { phone } = req.query;
+    if (!phone) return res.status(400).json({ message: 'Phone is required' });
+
+    const user = await User.findOne({ where: { phone } });
+    if (!user) return res.status(404).json({ exists: false, message: 'User not found' });
+
+    res.json({ exists: true, user });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 
 // Verify OTP
 router.post('/verify-otp', (req, res) => {
