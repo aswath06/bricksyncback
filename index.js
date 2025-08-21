@@ -8,7 +8,10 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 const userRoutes = require('./routes/userRoutes');
+const vehicleRoutes = require('./routes/vehicleRoutes'); // <-- import
+
 app.use('/api/users', userRoutes);
+app.use('/api/vehicles', vehicleRoutes); // <-- mount vehicles
 
 // Root
 app.get('/', (req, res) => {
