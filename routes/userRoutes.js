@@ -21,7 +21,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Get all users (🚫 no JWT now)
+// Get all users
 router.get('/', async (req, res) => {
   try {
     const users = await User.findAll();
@@ -31,36 +31,33 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Get user by ID (🚫 no JWT now)
-router.get('/:id', async (req, res) => {
+// 🔹 Specific routes FIRST
+
+// Get user by email
+router.get('/by-email', async (req, res) => {
   try {
-    const user = await User.findByPk(req.params.id);
-    if (!user) return res.status(404).json({ message: 'User not found' });
-    res.json(user);
+    const { email } = req.query;
+    if (!email) return res.status(400).json({ message: 'Email is required' });
+
+    const user = await User.findOne({ where: { email } });
+    if (!user) return res.status(404).json({ exists: false, message: 'User not found' });
+
+    res.json({ exists: true, user });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 });
 
-// Update user
-router.put('/:id', async (req, res) => {
+// Get user by phone
+router.get('/by-phone', async (req, res) => {
   try {
-    const user = await User.findByPk(req.params.id);
-    if (!user) return res.status(404).json({ message: 'User not found' });
-    await user.update(req.body);
-    res.json(user);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
+    const { phone } = req.query;
+    if (!phone) return res.status(400).json({ message: 'Phone is required' });
 
-// Delete user
-router.delete('/:id', async (req, res) => {
-  try {
-    const user = await User.findByPk(req.params.id);
-    if (!user) return res.status(404).json({ message: 'User not found' });
-    await user.destroy();
-    res.json({ message: 'User deleted successfully' });
+    const user = await User.findOne({ where: { phone } });
+    if (!user) return res.status(404).json({ exists: false, message: 'User not found' });
+
+    res.json({ exists: true, user });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -77,8 +74,45 @@ router.get('/by-userid/:userid', async (req, res) => {
   }
 });
 
+// 🔹 Generic routes AFTER specific ones
+
+// Get user by ID (numeric only to avoid clashes)
+router.get('/:id(\\d+)', async (req, res) => {
+  try {
+    const user = await User.findByPk(req.params.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json(user);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// Update user
+router.put('/:id(\\d+)', async (req, res) => {
+  try {
+    const user = await User.findByPk(req.params.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    await user.update(req.body);
+    res.json(user);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// Delete user
+router.delete('/:id(\\d+)', async (req, res) => {
+  try {
+    const user = await User.findByPk(req.params.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    await user.destroy();
+    res.json({ message: 'User deleted successfully' });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 // Get user statements
-router.get('/:userId/statements', async (req, res) => {
+router.get('/:userId(\\d+)/statements', async (req, res) => {
   try {
     const user = await User.findByPk(req.params.userId);
     if (!user) return res.status(404).json({ message: 'User not found' });
@@ -89,7 +123,7 @@ router.get('/:userId/statements', async (req, res) => {
 });
 
 // Add statement
-router.post('/add-statement/:userId', async (req, res) => {
+router.post('/add-statement/:userId(\\d+)', async (req, res) => {
   try {
     const user = await User.findByPk(req.params.userId);
     if (!user) return res.status(404).json({ message: 'User not found' });
@@ -138,36 +172,6 @@ router.post('/send-otp/email', async (req, res) => {
     res.status(500).json({ message: 'Failed to send OTP via email' });
   }
 });
-// Get user by email
-router.get('/by-email', async (req, res) => {
-  try {
-    const { email } = req.query;
-    if (!email) return res.status(400).json({ message: 'Email is required' });
-
-    const user = await User.findOne({ where: { email } });
-    if (!user) return res.status(404).json({ exists: false, message: 'User not found' });
-
-    res.json({ exists: true, user });
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
-
-// Get user by phone
-router.get('/by-phone', async (req, res) => {
-  try {
-    const { phone } = req.query;
-    if (!phone) return res.status(400).json({ message: 'Phone is required' });
-
-    const user = await User.findOne({ where: { phone } });
-    if (!user) return res.status(404).json({ exists: false, message: 'User not found' });
-
-    res.json({ exists: true, user });
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
-
 
 // Verify OTP
 router.post('/verify-otp', (req, res) => {
