@@ -2,16 +2,18 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
-// Body parser
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
 const userRoutes = require('./routes/userRoutes');
-const vehicleRoutes = require('./routes/vehicleRoutes'); // <-- import
+const vehicleRoutes = require('./routes/vehicleRoutes');
+const productRoutes = require('./routes/productRoutes');
 
 app.use('/api/users', userRoutes);
-app.use('/api/vehicles', vehicleRoutes); // <-- mount vehicles
+app.use('/api/vehicles', vehicleRoutes);
+app.use('/api/products', productRoutes);
 
 // Root
 app.get('/', (req, res) => {

@@ -1,4 +1,5 @@
 'use strict';
+
 module.exports = (sequelize, DataTypes) => {
   const Product = sequelize.define('Product', {
     id: {
@@ -30,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     availableSizes: {
-      type: DataTypes.ARRAY(DataTypes.STRING), // PostgreSQL only
+      type: DataTypes.ARRAY(DataTypes.STRING),
       allowNull: false,
       defaultValue: [],
     },
@@ -40,10 +41,10 @@ module.exports = (sequelize, DataTypes) => {
     },
   }, {});
 
-  // Optional: auto-generate ID if needed
-  Product.beforeCreate(async (product, options) => {
+  // Auto-generate ID if missing
+  Product.beforeCreate(async (product) => {
     if (!product.id) {
-      product.id = 'P' + Date.now(); // simple unique ID
+      product.id = 'P' + Date.now();
     }
   });
 
